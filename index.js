@@ -18,7 +18,7 @@ const url = require('url')
 // console.log('Reading File....');
 
 const server = http.createServer((req, res)=>{
-    const pathname = req.url;
+    const {pathname, query} = url.parse(req.url, true)
     if(pathname=='/overview'){
         res.end('This is Overview')
     }
