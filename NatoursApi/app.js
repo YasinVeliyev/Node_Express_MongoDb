@@ -82,23 +82,21 @@ app.patch("/api/v1/tours/:id", (req, res) => {
 });
 
 app.delete("/api/v1/tours/:id", (req, res) => {
-    let tour = tours.filter((tour) => tour.id != req.params.id);
-    if (!tour) {
+    let updatedTours = tours.filter((tour) => tour.id != req.params.id);
+    if (!updatedTours) {
         console.log(tour);
         return res.status(404).json({
             status: "fail",
             message: "Invalid Id",
         });
     }
-    fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tour), (err, data) => {
+    fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(updatedTours), (err, data) => {
         if (err) {
             return res.send(err);
         }
-        return res.status(201).json({
+        return res.status(204).json({
             status: "success",
-            data: {
-                tour: updatedTour,
-            },
+            data: null,
         });
     });
 });
