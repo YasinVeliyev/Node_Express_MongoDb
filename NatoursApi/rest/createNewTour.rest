@@ -1,0 +1,8 @@
+POST http://localhost:3000/api/v1/tours HTTP/1.1
+content-type: application/json
+
+{
+  "name":"Test tour",
+  "duration":10,
+  "difficulty":10
+}
