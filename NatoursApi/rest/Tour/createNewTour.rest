@@ -4,5 +4,6 @@ content-type: application/json
 {
   "name":"Test tour",
   "duration":10,
-  "difficulty":10
+  "difficulty":10,
+  "price":150
 }
