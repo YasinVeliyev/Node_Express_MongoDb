@@ -1,10 +1,6 @@
 const fs = require("fs");
-const users = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/users.json`));
-// const newusers = users.map((user, index) => {
-//     user.id = index;
-//     return user;
-// });
-// fs.writeFileSync(`${__dirname}/dev-data/data/newusers.json`, JSON.stringify(newusers));
+
+const users = JSON.parse(fs.readFileSync("./dev-data/data/users.json"));
 
 const getAllUsers = (req, res) => {
     res.status(200).json({
