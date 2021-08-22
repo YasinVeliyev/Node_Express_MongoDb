@@ -1,1 +1,3 @@
-GET http://localhost:3000/api/v1/tours HTTP/1.1
+GET http://localhost:3000/api/v1/tours
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMTAyMzNmNjJmOTk0YjEwMTZmZTY2NCIsImlhdCI6MTYyODg4MjEwMSwiZXhwIjoxNjM2NjU4MTAxfQ.oiXtihFSnZvk5M04FoCOB_II4AKApjCQTmWq9AFm08g

@@ -1,1 +1,2 @@
-DELETE  http://localhost:3000/api/v1/tours/2  HTTP/1.1
+DELETE  http://localhost:3000/api/v1/tours/6103022a4f68fb5f480703e0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMTAyNDA2MmIyZTBhYjNlMzAxYTI4NiIsImlhdCI6MTYyODQ0Nzc3MSwiZXhwIjoxNjM2MjIzNzcxfQ.ivAmiHUGkAHu1y0JuMU9aWccVajps1m999YDczlvpPM

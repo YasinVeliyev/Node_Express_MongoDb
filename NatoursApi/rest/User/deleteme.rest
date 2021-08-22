@@ -1,0 +1,3 @@
+POST http://localhost:3000/api/v1/users/deleteme
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWJlN2ZlZWY1MGY2MTdjMWUxNjFkYiIsImlhdCI6MTYyOTIxOTUwMiwiZXhwIjoxNjM2OTk1NTAyfQ.c64Mvmv4KiTvcUJW_S9V6a6Y-8zoHTUUsnBmGUJV4-4
