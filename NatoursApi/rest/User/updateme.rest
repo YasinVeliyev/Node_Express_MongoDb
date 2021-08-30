@@ -1,7 +1,7 @@
 post http://localhost:3000/api/v1/users/updateme
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMWJlN2ZlZWY1MGY2MTdjMWUxNjFkYiIsImlhdCI6MTYyOTIxODg1OCwiZXhwIjoxNjM2OTk0ODU4fQ.iXxHFZ9JXK1nXLZw7oXG8eS8kL664e3vrYxwx7d_Dco
+Content-Type: multipart/form-data
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjOGExZTFhMmY4ZmI4MTRiNTZmYTE4MiIsImlhdCI6MTYzMDM0NDM0MiwiZXhwIjoxNjM4MTIwMzQyfQ.sXablZ5pcAoev3iCNSfr20dGvNUwDQBYRBjYcmFuPqg
 
-{
+{    
     "name":"YasinVeliyev"
 }

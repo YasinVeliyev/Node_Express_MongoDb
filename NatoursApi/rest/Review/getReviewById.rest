@@ -1,0 +1,1 @@
+GET http://localhost:3000/api/v1/reviews/61225b3f90d7624849a2e2c6

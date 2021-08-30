@@ -3,7 +3,8 @@ Content-Type: application/json
 
 {
     "name":"Yasin",
-    "email":"veliyevd.yasin@gmail.com",
+    "email":"veliyev.yasin@gmail.com",
     "password":"123456789",
-    "passwordConfirm":"123456789"
+    "passwordConfirm":"123456789",
+    "role":"admin"
 }

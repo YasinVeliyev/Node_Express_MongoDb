@@ -1,0 +1,7 @@
+patch http://localhost:3000/api/v1/reviews/612531c8bb6526378e1f1185
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjOGExZTFhMmY4ZmI4MTRiNTZmYTE4MiIsImlhdCI6MTYyOTgyODY4OCwiZXhwIjoxNjM3NjA0Njg4fQ.AL9gPMbAQpghe1HuUzfQ8GSGHpKuDXFqpOCBbJ6jl0k
+Content-Type: application/json
+
+{
+    "rating":5
+}

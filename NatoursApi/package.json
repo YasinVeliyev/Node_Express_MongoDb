@@ -4,21 +4,32 @@
     "description": "",
     "main": "app.js",
     "dependencies": {
+        "@babel/polyfill": "^7.12.1",
         "bcryptjs": "^2.4.3",
+        "cookie-parser": "^1.4.5",
+        "core-js": "^3.16.3",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "jsonwebtoken": "^8.5.1",
+        "login": "^0.8.0",
+        "mapbox-gl": "^2.4.1",
         "mongoose": "^5.13.4",
         "morgan": "^1.10.0",
+        "multer": "^1.4.3",
         "ndb": "^1.1.5",
         "nodemailer": "^6.6.3",
+        "pug": "^3.0.2",
+        "regenerator-runtime": "^0.13.9",
+        "sharp": "^0.29.0",
         "validator": "^13.6.0"
     },
     "scripts": {
         "start": "nodemon server.js",
         "start:prod": "NODE_ENV=production nodemon server.js",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "debug": "ndb server.js"
+        "debug": "ndb server.js",
+        "watch:js": "parcel watch ./public/js/index.js  --out-dir ./public/js --out-file bundle.js --public-url .",
+        "build:js": "parcel watch ./public/js/index.js  --out-dir ./public/js --out-file bundle.js --public-url ."
     },
     "keywords": [],
     "author": "",

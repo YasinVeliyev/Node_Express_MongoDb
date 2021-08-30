@@ -1,0 +1,2 @@
+
+Get http://localhost:3000/api/v1/tours/611fed218be8f41ea19f1602/reviews  HTTP/1.1

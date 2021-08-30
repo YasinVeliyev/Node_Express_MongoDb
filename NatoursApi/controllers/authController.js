@@ -17,17 +17,8 @@ const signUp = catchAsync(async (req, res, next) => {
     });
     const token = signToken(newUser._id);
     res.status(201).json({ status: "succes", token, data: { user: newUser } });
+    next();
 });
-
-const filteredBody = (obj, ...args) => {
-    let newObj = {};
-    Array.from(args).forEach((elem) => {
-        if (obj.hasOwnProperty(elem)) {
-            newObj[elem] = obj[elem];
-        }
-    });
-    return newObj;
-};
 
 const login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
@@ -39,7 +30,7 @@ const login = catchAsync(async (req, res, next) => {
     if (user && (await user.checkPassword(password, user.password))) {
         const token = signToken(user._id);
         return res.status(200).json({
-            status: "succes",
+            status: "success",
             token,
         });
     }
@@ -51,9 +42,11 @@ const protect = catchAsync(async (req, res, next) => {
     let token;
     if (req.headers?.authorization?.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt;
     }
     if (!token) {
-        return next(new AppError("You are not logged in! Please log in to access"));
+        return next(new AppError(401, "You are not logged in! Please log in to access"));
     }
 
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -64,7 +57,9 @@ const protect = catchAsync(async (req, res, next) => {
     if (currentUser.changePasswordAfter(decoded.iat)) {
         return next(new AppError(401, "User recently changed password, Please log in again"));
     }
+    req.params.id = decoded.id;
     req.user = currentUser;
+    res.locals.user = currentUser;
     next();
 });
 
@@ -128,12 +123,9 @@ const resetPassword = catchAsync(async (req, res, next) => {
 
 const updatePassword = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.user.id).select("+password");
-    console.log(req.body);
     if (!(await user.checkPassword(req.body.passwordCurrent, user.password))) {
-        console.log(req.user);
         return next(new AppError(401, "Your current password is wrong"));
     }
-    console.log(req.user);
     user.password = req.body.password;
     user.passwordConfirm = req.body.passwordConfirm;
 
@@ -148,27 +140,58 @@ const updatePassword = catchAsync(async (req, res, next) => {
     });
 });
 
-const updateMe = catchAsync(async (req, res, next) => {
-    if (req.body.password || req.body.passwordConfirm) {
-        return next(new AppError(400, "This route is not for password updates. Please use /updatepassword"));
+const isLoggedIn = catchAsync(async (req, res, next) => {
+    if (req.cookies.jwt) {
+        let token = req.cookies.jwt;
+        try {
+            const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+            console.log(decoded);
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) {
+                return next();
+            }
+            if (currentUser.changePasswordAfter(decoded.iat)) {
+                return next();
+            }
+            res.locals.user = currentUser;
+            return next();
+        } catch (error) {
+            return next();
+        }
     }
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody(req.body, "name", "email"), {
-        new: true,
-        runValidators: true,
-    });
-
-    res.status(200).json({
-        status: "succes",
-        data: {
-            updatedUser,
-        },
-    });
+    next();
 });
 
-const deleteMe = catchAsync(async (req, res, next) => {
-    await User.findByIdAndUpdate(req.user.id, { active: false });
-    res.status(204).json({ status: "success", data: {} });
-});
+const logout = (req, res, next) => {
+    res.cookie("jwt", "logout", {
+        expires: new Date(Date.now() + 5000),
+        httpOnly: true,
+    });
+    res.status(200).json({ status: "success" });
+    next();
+};
+
+/* const updateMe = catchAsync(async (req, res, next) => {
+//     if (req.body.password || req.body.passwordConfirm) {
+//         return next(new AppError(400, "This route is not for password updates. Please use /updatepassword"));
+//     }
+//     const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody(req.body, "name", "email"), {
+//         new: true,
+//         runValidators: true,
+//     });
+
+//     res.status(200).json({
+//         status: "succes",
+//         data: {
+//             updatedUser,
+//         },
+//     });
+// });
+
+// const deleteMe = catchAsync(async (req, res, next) => {
+//     await User.findByIdAndUpdate(req.user.id, { active: false });
+//     res.status(204).json({ status: "success", data: {} });
+// });*/
 
 module.exports = {
     signUp,
@@ -178,6 +201,6 @@ module.exports = {
     forgotPassword,
     resetPassword,
     updatePassword,
-    updateMe,
-    deleteMe,
+    isLoggedIn,
+    logout,
 };

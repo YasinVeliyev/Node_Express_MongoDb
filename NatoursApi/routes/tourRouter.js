@@ -8,16 +8,28 @@ const {
     aliasTopTour,
     getToursStats,
     getMonhtlyPlan,
+    getToursWithin,
+    getDistances,
 } = require("../controllers/tourController");
 
 const { protect, restrictTo } = require("../controllers/authController");
+const reviewRouter = require("./reviewRouter");
 
 const tourRouter = express.Router();
 // tourRouter.param("id", checkTourById);
+tourRouter.use("/:tourId/reviews", reviewRouter);
+
 tourRouter.route("/getmonthlyplan/:year").get(getMonhtlyPlan);
 tourRouter.route("/tour-stats").get(getToursStats);
 tourRouter.route("/top-5-cheap").get(aliasTopTour, getAlltours);
-tourRouter.route("/").get(protect, getAlltours).post(createTour);
-tourRouter.route("/:id").get(getTour).patch(updateTour).delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
+tourRouter.route("/").get(getAlltours).post(protect, restrictTo("admin", "lead-guide"), createTour);
+
+tourRouter
+    .route("/:id")
+    .get(getTour)
+    .patch(protect, restrictTo("admin", "lead-guide"), updateTour)
+    .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
+tourRouter.get("/tours-distance/:distance/:latlng/unit/:unit", getToursWithin);
+tourRouter.route("/distances/:latlng/unit/:unit").get(getDistances);
 
 module.exports = tourRouter;

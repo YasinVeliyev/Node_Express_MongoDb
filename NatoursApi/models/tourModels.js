@@ -10,7 +10,7 @@ const tourSchema = new mongoose.Schema(
         ratingsAverage: { type: Number, default: 4.5 },
         ratingsQuantity: { type: Number, default: 0 },
         price: { type: Number, required: [true, "A tour must have a price"] },
-        priceDiscount: Number,
+        priceDiscount: { type: Number },
         summary: { type: String, trim: true, required: [true, "A tour must have description"] },
         description: { type: String, trim: true },
         imageCover: { type: String, required: [true, "A tour must have a cover image"] },
@@ -37,16 +37,31 @@ const tourSchema = new mongoose.Schema(
             },
         ],
         guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+        slug: String,
     },
-    { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+    { toJSON: { virtuals: true }, toObject: { virtuals: true }, writeConcern: true }
 );
 
 tourSchema.virtual("durationWeeks").get(function () {
     return this.duration / 7;
 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ startLocation: "2dsphere" });
 
-tourSchema.pre("save", function () {
+tourSchema.virtual("reviews", {
+    ref: "Review",
+    foreignField: "tour",
+    localField: "_id",
+});
+
+tourSchema.pre("save", function (next) {
     console.log(this);
+    next();
+});
+
+tourSchema.pre("save", function (next) {
+    this.slug = this.name.toLowerCase().replace(/\s/g, "-");
+    next();
 });
 
 // tourSchema.pre("save", async function (next) {

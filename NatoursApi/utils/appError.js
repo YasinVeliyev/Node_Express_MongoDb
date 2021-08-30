@@ -3,7 +3,7 @@ class AppError extends Error {
         super(message);
         this.statusCode = statusCode;
         this.status = `${this.statusCode}`.startsWith("4") ? "Fail" : "Error";
-        this.isOperational = true;
+        this.isOperational = process.env.NODE_ENV === "development";
         Error.captureStackTrace(this, this.constructor);
     }
 }

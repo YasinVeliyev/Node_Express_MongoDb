@@ -1,1 +1,2 @@
-get http://localhost:3000/api/v1/users
+get http://localhost:3000/api/v1/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMTAyMGZhNWRjMTI2YWI1MzhlZWQ5OSIsImlhdCI6MTYyOTY2MTkwMSwiZXhwIjoxNjM3NDM3OTAxfQ.LAYBlpalN0KYiMbqV3BpL00VIXa_jHPauUcO8fSfqsY

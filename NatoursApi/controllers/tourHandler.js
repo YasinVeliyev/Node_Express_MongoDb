@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const tours = JSON.parse(fs.readFileSync(`./dev-data/data/tours.json`));
+// const tours = JSON.parse(fs.readFileSync(`./dev-data/data/tours.json`));
 
 const checkTourById = (req, res, next, val) => {
     let tour = tours.find((tour) => tour.id == val);

@@ -1,10 +1,8 @@
-POST http://localhost:3000/api/v1/reviews
+POST http://localhost:3000/api/v1/tours/612524be3ebd751934089cc3/reviews
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMTAyMzNmNjJmOTk0YjEwMTZmZTY2NCIsImlhdCI6MTYyOTYzOTg2NywiZXhwIjoxNjM3NDE1ODY3fQ.BADjuRJFBa4Lgrf1ka_whxy2g5t7h_IQz3gp46ooGHw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjOGExZTFhMmY4ZmI4MTRiNTZmYTE4MiIsImlhdCI6MTYyOTgyNjkwMiwiZXhwIjoxNjM3NjAyOTAyfQ.EMl_LM_5_OyGI7wd8S5_xvQI3hyvLs--JkIysA-6GnE
 
 {
-    "review":"Amazing Tour!",
-    "rating":5,
-    "tour":"611fed218be8f41ea19f1602",
-    "user":"611024062b2e0ab3e301a286"
+    "review":"Very bad!",
+    "rating":5
 }
