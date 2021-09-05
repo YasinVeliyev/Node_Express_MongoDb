@@ -1,6 +1,7 @@
 const { catchAsync } = require("./errorController");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
+const mongoose = require("mongoose");
 
 exports.deleteOne = (Model) =>
     catchAsync(async (req, res, next) => {
@@ -16,12 +17,12 @@ exports.deleteOne = (Model) =>
 
 exports.updateOne = (Model) =>
     catchAsync(async (req, res, next) => {
-        console.log("Params", req.body);
-        const document = await Model.findByIdAndUpdate(req.params.id, req.body, {
+        let id = mongoose.Types.ObjectId(req.params.tourId);
+        console.log(req.body);
+        const document = await Model.findByIdAndUpdate(id, req.body, {
             new: true,
             runValidators: true,
         });
-        console.log(document);
         if (!document) {
             return next(new AppError(404, "Not found with that ID"));
         }
@@ -48,7 +49,11 @@ exports.createOne = (Model) =>
 
 exports.getOne = (Model, popOptions) =>
     catchAsync(async (req, res, next) => {
-        let query = Model.findById(req.params.id);
+        let query;
+        if (req.params.tourId) query = Model.findById(req.params.tourId);
+        else {
+            query = Model.findById(req.params.id);
+        }
         if (popOptions) {
             query
                 .populate({

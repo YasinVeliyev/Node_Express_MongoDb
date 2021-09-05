@@ -1,10 +1,14 @@
 extends base
 mixin navItem(link,text,icon,active)
     li(class=`${active?"side-nav--active":""}`)
-        a(href=`${link}`)
-            svg
-                use(xlink:href=`img/icons.svg#icon-${icon}`)
-            |#{text}
+            a(href=`${link}`)
+                svg
+                    use(xlink:href=`img/icons.svg#icon-${icon}`)
+                if(text==="My bookings"||text==="Manage bookings")
+                    |#{text}
+                    span.length= length
+                else 
+                    |#{text}
 
 block content 
     main.main
@@ -12,7 +16,7 @@ block content
             nav.user-view__menu
                 ul.side-nav
                     +navItem('#',"Settings",'settings')
-                    +navItem('#',"My bookings",'briefcase')
+                    +navItem('/my-tours',"My bookings",'briefcase')
                     +navItem('#',"My reviews",'star')
                     +navItem('#',"Billing",'credit-card')
                     if(user.role='admin')
@@ -22,7 +26,7 @@ block content
                                 +navItem('#',"Manage tours",'map')
                                 +navItem('#',"Manage users",'users')
                                 +navItem('#',"Manage reviews",'star')
-                                +navItem('#',"Manage bookings",'briefcase')   
+                                +navItem('/my-tours',`Manage bookings`,'briefcase')   
         
             .user-view__content
                 .user-view__form-container

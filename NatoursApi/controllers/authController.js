@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const User = require("../models/userModel");
+const Tour = require("../models/tourModels");
 const { catchAsync } = require("./errorController");
 const AppError = require("../utils/appError");
 const { signToken } = require("../utils/generateToken");
-const sendMail = require("../utils/email");
+const Email = require("../utils/email");
 const crypto = require("crypto");
 
 const signUp = catchAsync(async (req, res, next) => {
@@ -15,9 +16,10 @@ const signUp = catchAsync(async (req, res, next) => {
         passwordConfirm: req.body.passwordConfirm,
         role: req.body.role,
     });
+    const url = `${req.protocol}://${req.get("host")}/me`;
+    await new Email(newUser, url).sendWelcome();
     const token = signToken(newUser._id);
     res.status(201).json({ status: "succes", token, data: { user: newUser } });
-    next();
 });
 
 const login = catchAsync(async (req, res, next) => {
@@ -28,7 +30,7 @@ const login = catchAsync(async (req, res, next) => {
     }
     const user = await User.findOne({ email }).select("+password");
     if (user && (await user.checkPassword(password, user.password))) {
-        const token = signToken(user._id);
+        const token = signToken(user, res);
         return res.status(200).json({
             status: "success",
             token,
@@ -40,6 +42,7 @@ const login = catchAsync(async (req, res, next) => {
 
 const protect = catchAsync(async (req, res, next) => {
     let token;
+
     if (req.headers?.authorization?.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     } else if (req.cookies.jwt) {
@@ -48,8 +51,8 @@ const protect = catchAsync(async (req, res, next) => {
     if (!token) {
         return next(new AppError(401, "You are not logged in! Please log in to access"));
     }
-
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
         return next(new AppError(401, "The user belonging token doesnot exist"));
@@ -87,11 +90,12 @@ const forgotPassword = catchAsync(async (req, res, next) => {
     const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to :${resetURL}`;
 
     try {
-        await sendMail({
-            email: user.email,
-            subjetc: "Your Password reset token",
-            message,
-        });
+        // await sendMail({
+        //     email: user.email,
+        //     subjetc: "Your Password reset token",
+        //     message,
+        // });
+        await new Email(user, resetURL).sendPasswordReset();
         res.status(200).json({
             status: "succes",
             message: "Token sent to email",
@@ -145,7 +149,6 @@ const isLoggedIn = catchAsync(async (req, res, next) => {
         let token = req.cookies.jwt;
         try {
             const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-            console.log(decoded);
             const currentUser = await User.findById(decoded.id);
             if (!currentUser) {
                 return next();
@@ -162,11 +165,20 @@ const isLoggedIn = catchAsync(async (req, res, next) => {
     next();
 });
 
-const logout = (req, res, next) => {
-    res.cookie("jwt", "logout", {
-        expires: new Date(Date.now() + 5000),
-        httpOnly: true,
-    });
+const logout = async (req, res, next) => {
+    try {
+        if (req.cookies.jwt) {
+            res.cookie("jwt", "logout", {
+                expires: new Date(Date.now() + 3000),
+                httpOnly: true,
+            });
+            const tours = await Tour.find();
+            return res.status(200).render("overview", { title: "All Tours", tours });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+
     res.status(200).json({ status: "success" });
     next();
 };

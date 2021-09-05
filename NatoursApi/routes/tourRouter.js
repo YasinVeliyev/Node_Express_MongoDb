@@ -10,6 +10,8 @@ const {
     getMonhtlyPlan,
     getToursWithin,
     getDistances,
+    resizeTourImages,
+    uploadTourImages,
 } = require("../controllers/tourController");
 
 const { protect, restrictTo } = require("../controllers/authController");
@@ -25,9 +27,9 @@ tourRouter.route("/top-5-cheap").get(aliasTopTour, getAlltours);
 tourRouter.route("/").get(getAlltours).post(protect, restrictTo("admin", "lead-guide"), createTour);
 
 tourRouter
-    .route("/:id")
+    .route("/:tourId")
     .get(getTour)
-    .patch(protect, restrictTo("admin", "lead-guide"), updateTour)
+    .patch(protect, restrictTo("admin", "lead-guide"), uploadTourImages, resizeTourImages, updateTour)
     .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
 tourRouter.get("/tours-distance/:distance/:latlng/unit/:unit", getToursWithin);
 tourRouter.route("/distances/:latlng/unit/:unit").get(getDistances);

@@ -1253,3 +1253,9 @@ a.navl__el {
     font-size: 20px;
     text-decoration: none;
 }
+.length {
+    margin-left: 10px;
+    font-weight: bold;
+    text-align: center;
+    color: #ffffff;
+}

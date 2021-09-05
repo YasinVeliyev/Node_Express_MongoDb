@@ -1,68 +1,53 @@
+const multer = require("multer");
+const sharp = require("sharp");
 const Tour = require("../models/tourModels");
 const AppError = require("../utils/appError");
 const { catchAsync } = require("./errorController");
 const { deleteOne, updateOne, createOne, getOne, getAll } = require("./handlerFactory");
 
-// const getAlltours = catchAsync(async (req, res, next) => {
-//     const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
-//     let tours = await features.query;
+const multerStorage = multer.memoryStorage();
 
-//     res.status(200).json({
-//         status: "succes",
-//         result: tours.length,
-//         data: { tours },
-//     });
-// });
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image")) {
+        cb(null, true);
+    } else {
+        cb(new AppError(400, "Please upload only images"), false);
+    }
+};
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+const uploadTourImages = upload.fields([
+    { name: "imageCover", maxCount: 1 },
+    { name: "images", maxCount: 3 },
+]);
 
-// const createTour = catchAsync(async (req, res, next) => {
-//     let newTour = await Tour.create(req.body);
-//     res.status(201).json({
-//         status: "success",
-//         data: {
-//             tour: newTour,
-//         },
-//     });
-// });
+const resizeTourImages = async (req, res, next) => {
+    // console.log(req.files.images, req.params.id);
+    if (!req.files || !req.files.images || !req.files.imageCover) {
+        console.log("req.body.imageCover");
+        return next();
+    }
+    req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+    req.body.images = [];
+    await sharp(req.files.imageCover[0].buffer)
+        .resize(2000, 1333)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${req.body.imageCover}`);
 
-// const getTour = catchAsync(async (req, res, next) => {
-//     const tour = await Tour.findById(req.params.id)
-//         .populate({
-//             path: "guides",
-//             select: "-__v -passwordChangedAt",
-//         })
-//         .populate({ path: "reviews" });
-//     if (!tour) {
-//         return next(new AppError(404, "Not found with that ID"));
-//     }
-//     return res.status(200).json({
-//         status: "succes",
-//         data: { tour },
-//     });
-// });
+    await Promise.all(
+        req.files.images.map(async (file, i) => {
+            const filename = `user-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+            await sharp(file.buffer)
+                .resize(500, 500)
+                .toFormat("jpeg")
+                .jpeg({ quality: 90 })
+                .toFile(`public/img/tours/${filename}`);
+            req.body.images.push(filename);
+        })
+    );
+    next();
+};
 
-// const updateTour = catchAsync(async (req, res, next) => {
-//     const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-//     if (!updatedTour) {
-//         return next(new AppError(404, "Not found with that ID"));
-//     }
-//     res.status(200).json({
-//         status: "succes",
-//         data: {
-//             tour: updatedTour,
-//         },
-//     });
-// });
-
-// const deleteTour = catchAsync(async (req, res, next) => {
-//     let tour = await Tour.findByIdAndDelete(req.params.id);
-//     if (!tour) {
-//         return next(new AppError(404, "Not found with that ID"));
-//     }
-//     res.status(204).json({
-//         status: "success",
-//         data: null,
-//     });
-// });
 const getAlltours = getAll(Tour);
 const createTour = createOne(Tour);
 const getTour = getOne(Tour, true);
@@ -171,4 +156,6 @@ module.exports = {
     getMonhtlyPlan,
     getToursWithin,
     getDistances,
+    resizeTourImages,
+    uploadTourImages,
 };

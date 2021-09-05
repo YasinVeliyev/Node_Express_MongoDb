@@ -15,7 +15,7 @@ const AppError = require("../utils/appError");
 // };
 
 const sendError = (error, req, res) => {
-    if (error.isOperational) {
+    if (error.isOperational) {  
         console.log(error);
         if (req.originalUrl.startsWith("/api")) {
             return res.status(error.statusCode).json({
@@ -51,7 +51,7 @@ const globalErrorHandler = (err, req, res, next) => {
     let statusCode = err.statusCode || 500;
     let status = err.status || "error";
     if (process.env.NODE_ENV === "development") {
-        console.log(err.statusCode);
+        console.log(err);
         return sendError(err, req, res);
     } else if (process.env.NODE_ENV === "production") {
         let error = { ...err, name: err.name, message: err.message };
@@ -65,7 +65,6 @@ const globalErrorHandler = (err, req, res, next) => {
 const catchAsync = (fn) => {
     return (req, res, next) => {
         fn(req, res, next).catch((err) => {
-            console.log(err);
             next(err);
         });
     };

@@ -1,4 +1,4 @@
-PATCH  http://localhost:3000/api/v1/tours/6102def665e4fd2043142bc0  HTTP/1.1
+PATCH  http://localhost:3000/api/v1/tours/612e743bc89f8c31d0b85839  HTTP/1.1
 Content-Type: application/json
 
 {

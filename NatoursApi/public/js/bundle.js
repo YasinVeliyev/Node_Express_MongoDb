@@ -918,8 +918,9 @@ var login = /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.prev = 0;
-            _context.next = 3;
+            console.log("sdas");
+            _context.prev = 1;
+            _context.next = 4;
             return fetch("http://localhost:3000/api/v1/users/login", {
               method: "POST",
               credentials: "same-origin",
@@ -932,16 +933,15 @@ var login = /*#__PURE__*/function () {
               })
             });
 
-          case 3:
+          case 4:
             res = _context.sent;
-            _context.next = 6;
+            _context.next = 7;
             return res.json();
 
-          case 6:
+          case 7:
             response = _context.sent;
 
             if (res.status == 200) {
-              document.cookie = "jwt=".concat(response.token);
               window.setTimeout(function () {
                 (0, _alerts.showAlert)("success", "Loged in Successfully");
                 location.assign("/");
@@ -950,20 +950,20 @@ var login = /*#__PURE__*/function () {
               (0, _alerts.showAlert)("error", response.message);
             }
 
-            _context.next = 13;
+            _context.next = 14;
             break;
 
-          case 10:
-            _context.prev = 10;
-            _context.t0 = _context["catch"](0);
+          case 11:
+            _context.prev = 11;
+            _context.t0 = _context["catch"](1);
             console.log(_context.t0);
 
-          case 13:
+          case 14:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 10]]);
+    }, _callee, null, [[1, 11]]);
   }));
 
   return function login(_x, _x2) {
@@ -34327,6 +34327,70 @@ var updateData = /*#__PURE__*/function () {
 }();
 
 exports.updateData = updateData;
+},{"./alerts":"alerts.js"}],"stripe.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.bookTour = void 0;
+
+var _alerts = require("./alerts");
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var stripe = Stripe("pk_test_51JVgkZCDvtHcKGZ70RgBYLIOvIfVrO9dz5FRr0N85eGgLXJ3csb38FldgIPlrtaLlsUpcZVHvzvwVYCboKKx4iic00mGAc1hua");
+
+var bookTour = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(tourId) {
+    var session, data;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return fetch("http://localhost:3000/api/v1/bookings/checkout-session/".concat(tourId), {});
+
+          case 3:
+            session = _context.sent;
+            _context.next = 6;
+            return session.json();
+
+          case 6:
+            data = _context.sent;
+            console.log(data);
+            _context.next = 10;
+            return stripe.redirectToCheckout({
+              sessionId: data.data.session.id
+            });
+
+          case 10:
+            _context.next = 16;
+            break;
+
+          case 12:
+            _context.prev = 12;
+            _context.t0 = _context["catch"](0);
+            console.log(_context.t0);
+            (0, _alerts.showAlert)("error", _context.t0);
+
+          case 16:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 12]]);
+  }));
+
+  return function bookTour(_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+exports.bookTour = bookTour;
 },{"./alerts":"alerts.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -34338,15 +34402,19 @@ var _mapbox = require("./mapbox");
 
 var _updateSetings = require("./updateSetings");
 
+var _stripe = require("./stripe");
+
 // import "@babel/polyfill";
 var map = document.getElementById("map");
 var form = document.querySelector("#login");
 var logoutBtn = document.querySelector(".el--logout");
 var updateForm = document.querySelector(".form-user-data");
 var userPasswordForm = document.querySelector(".form-user-password");
+var bookBtn = document.getElementById("book-tour");
 
 if (map) {
   var locations = JSON.parse(map.dataset.locations);
+  console.log(locations);
   (0, _mapbox.displayMap)(locations);
 }
 
@@ -34384,7 +34452,15 @@ if (userPasswordForm) {
     }, "password");
   });
 }
-},{"regenerator-runtime/runtime":"../../node_modules/regenerator-runtime/runtime.js","./login":"login.js","./mapbox":"mapbox.js","./updateSetings":"updateSetings.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+if (bookBtn) {
+  bookBtn.addEventListener("click", function (event) {
+    event.target.textContent = "Processing";
+    var tourId = event.target.dataset.tourId;
+    (0, _stripe.bookTour)(tourId);
+  });
+}
+},{"regenerator-runtime/runtime":"../../node_modules/regenerator-runtime/runtime.js","./login":"login.js","./mapbox":"mapbox.js","./updateSetings":"updateSetings.js","./stripe":"stripe.js"}],"../../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -34412,7 +34488,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36811" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33457" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

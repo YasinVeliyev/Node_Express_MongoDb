@@ -1,6 +1,7 @@
 import { showAlert } from "./alerts";
 
 export const login = async (email, password) => {
+    console.log("sdas");
     try {
         const res = await fetch("http://localhost:3000/api/v1/users/login", {
             method: "POST",
@@ -10,7 +11,6 @@ export const login = async (email, password) => {
         });
         let response = await res.json();
         if (res.status == 200) {
-            document.cookie = `jwt=${response.token}`;
             window.setTimeout(() => {
                 showAlert("success", "Loged in Successfully");
                 location.assign("/");
