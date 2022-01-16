@@ -3,6 +3,8 @@ const fs = require("fs");
 const url = require("url");
 const path = require("path");
 
+const replaceTemplate = require("./modules/replaceTemplates");
+
 const productData = fs.readFileSync(path.join(__dirname, "dev-data/data.json"), "utf-8");
 const template = fs.readFileSync(path.join(__dirname, "templates/template.html"), "utf-8");
 const overview = fs.readFileSync(path.join(__dirname, "templates/overview.html"), "utf-8");
@@ -10,23 +12,9 @@ const product = fs.readFileSync(path.join(__dirname, "templates/product.html"), 
 
 let dataObj = JSON.parse(productData);
 
-const replaceTemplate = (temp, product) => {
-    let output = temp.replace(/{%productName%}/g, product.productName);
-    output = output.replace(/{%image%}/g, product.image);
-    output = output.replace(/{%price%}/g, product.price);
-    output = output.replace(/{%id%}/g, product.id);
-    output = output.replace(/{%from%}/g, product.from);
-    output = output.replace(/{%nutrients%}/g, product.nutrients);
-    output = output.replace(/{%quantity%}/g, product.quantity);
-    output = output.replace(/{%description%}/g, product.description);
-    if (!product.organic) {
-        output = output.replace(/{%NOT_ORGANIC%}/g, "not-organic");
-    }
-    return output;
-};
-
 const server = http.createServer((req, res) => {
     let { pathname, query } = url.parse(req.url, true);
+
     if (pathname == "/overview" || req.url == "/") {
         res.writeHead(200, {
             "Content-Type": "text/html",
