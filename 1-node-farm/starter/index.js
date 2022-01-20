@@ -4,6 +4,7 @@ const url = require("url");
 const path = require("path");
 
 const replaceTemplate = require("./modules/replaceTemplates");
+console.log(require("./event"));
 
 const productData = fs.readFileSync(path.join(__dirname, "dev-data/data.json"), "utf-8");
 const template = fs.readFileSync(path.join(__dirname, "templates/template.html"), "utf-8");
