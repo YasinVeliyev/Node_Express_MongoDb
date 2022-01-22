@@ -1,33 +1,19 @@
 const fs = require("node:fs");
 
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 
+const tourRouter = require("./routes/api/tourRoutes");
+const userRouter = require("./routes/api/userRoutes");
 app.use(express.json());
-// app.get("/", (req, res, next) => {
-//   res.status(200).json({ message: "Hello from the server side", app: "Natours" });
-// });
-
-// app.post("/", (req, res, next) => {
-//   res.send("You can post to this endpoint ... ");
-// });
-const tours = JSON.parse(fs.readFileSync("./dev-data/data/tours-simple.json", "utf-8"));
-
-app.get("/api/v1/tours", (req, res, next) => {
-    res.status(200).json({
-        status: "success",
-        results: tours.length,
-        data: tours,
-    });
+app.use(morgan("dev"));
+app.use((req, res, next) => {
+    console.log("Hello from middleware");
+    next();
 });
-
-app.post("/api/v1/tours", (req, res, next) => {
-    // req.on("data", (data) => {
-    //     console.log(JSON.parse(data.toString()));
-    // });
-    console.log(req.body);
-    res.status(201).send("Done");
-});
+app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/users", userRouter);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
