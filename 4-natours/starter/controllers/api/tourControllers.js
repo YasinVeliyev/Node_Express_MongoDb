@@ -7,17 +7,12 @@ exports.getAllTours = async (req, res, next) => {
         const tours = await Tour.find(filter)
             .sort(sort?.split(",").join(" "))
             .select(fields?.split(",").join(" "))
-            .skip(((page || 1) - 1) * (limit || 0))
+            .skip((page - 1) * limit || 0)
             .limit(+limit || 100);
-        // if (sort) {
-        //     sort = sort.split(",").join(" ");
-        //     query = query.sort(sort);
-        // }
-        // if (fields) {
-        //     fields = fields.split(",").join(" ");
-        //     query = query.select(fields);
-        // }
-        // const tours = await query;
+
+        if (!tours.length) {
+            throw new Error("This page does not exist");
+        }
         res.status(200).json({
             status: "success",
             results: tours.length,
