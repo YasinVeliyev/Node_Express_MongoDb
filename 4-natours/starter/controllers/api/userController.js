@@ -1,4 +1,5 @@
 const fs = require("node:fs");
+const Tour = require("../../models/tourModel");
 
 let users = JSON.parse(fs.readFileSync("./dev-data/data/users.json", "utf-8"));
 
@@ -21,7 +22,7 @@ exports.createUser = (req, res, next) => {
 };
 
 exports.getUser = (req, res, next) => {
-    let user = users.filter((user) => user._id == req.params.userId);
+    let user = users.filter(user => user._id == req.params.userId);
     if (user.length === 1) {
         return res.status(200).json({
             status: "success",
@@ -35,7 +36,7 @@ exports.getUser = (req, res, next) => {
 };
 
 exports.updateUser = (req, res, next) => {
-    let updatedUser = users.filter((user) => user._id == req.params.userId);
+    let updatedUser = users.filter(user => user._id == req.params.userId);
     if (updatedUser.length) {
         return res.status(200).json({
             status: "success",
@@ -49,7 +50,7 @@ exports.updateUser = (req, res, next) => {
 };
 
 exports.deleteUser = (req, res, next) => {
-    users = users.filter((tour) => tour.id != req.params.tourId);
+    users = users.filter(tour => tour.id != req.params.tourId);
     if (tour.length) {
         return res.status(204).json({
             status: "success",
