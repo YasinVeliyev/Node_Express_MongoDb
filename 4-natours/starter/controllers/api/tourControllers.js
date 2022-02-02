@@ -53,6 +53,7 @@ exports.createTour = async (req, res, next) => {
     } catch (error) {
         res.status(500).json({
             status: "fail",
+            error,
         });
     }
 };
@@ -74,6 +75,7 @@ exports.updateTour = async (req, res, next) => {
         return res.status(404).json({
             status: "fail",
             message: "Tour not Find",
+            error,
         });
     }
 };
@@ -92,4 +94,72 @@ exports.deleteTour = (req, res, next) => {
                 error: err,
             }),
         );
+};
+
+exports.getTourStats = async (req, res, next) => {
+    try {
+        const stats = await Tour.aggregate([
+            {
+                $match: { ratingaAverage: { $gte: 4.5 } },
+            },
+            {
+                $group: {
+                    _id: "$difficulty",
+                    num: { $sum: 1 },
+                    numRatings: { $sum: "$ratingsQuantity" },
+                    avgrating: { $avg: "$ratingaAverage" },
+                    avgprice: { $avg: "$price" },
+                    minPrice: { $min: "$price" },
+                    maxPrice: { $max: "$price" },
+                },
+            },
+        ]);
+        return res.status(200).json({
+            status: "success",
+            data: stats,
+        });
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            message: "Tour not Find",
+            error,
+        });
+    }
+};
+
+exports.getMonthlyPlan = async (req, res, next) => {
+    try {
+        const { year } = req.params;
+        const plan = await Tour.aggregate([
+            {
+                $unwind: "$startDates",
+            },
+            {
+                $match: { startDates: { $gte: new Date(`${year}-01-01`), $lte: new Date(`${year}-12-31`) } },
+            },
+            {
+                $group: {
+                    _id: { $month: "$startDates" },
+                    numTourStarts: { $sum: 1 },
+                    tours: { $push: "$name" },
+                },
+            },
+            {
+                $addFields: { month: "$_id" },
+            },
+            { $project: { _id: 0 } },
+            { $sort: { numTourStarts: -1 } },
+        ]);
+        return res.status(200).json({
+            status: "success",
+            results: plan.length,
+            data: { plan },
+        });
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            message: "Tour not Find",
+            error,
+        });
+    }
 };
