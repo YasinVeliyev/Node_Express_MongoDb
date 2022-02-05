@@ -1,19 +1,19 @@
 const { Router } = require("express");
 
 const apiController = require("../../controllers/api/tourControllers");
-
+const catchAsync = require("../../utils/catchAsync");
 const router = Router();
 
 router
     .route("/")
-    .get(apiController.getAllTours)
-    .post(apiController.createTour);
-router.route("/tour-stats").get(apiController.getTourStats);
-router.route("/monthly-plan/:year").get(apiController.getMonthlyPlan);
+    .get(catchAsync(apiController.getAllTours))
+    .post(catchAsync(apiController.createTour));
+router.route("/tour-stats").get(catchAsync(apiController.getTourStats));
+router.route("/monthly-plan/:year").get(catchAsync(apiController.getMonthlyPlan));
 router
     .route("/:tourId")
-    .get(apiController.getTour)
-    .patch(apiController.updateTour)
-    .delete(apiController.deleteTour);
+    .get(catchAsync(apiController.getTour))
+    .patch(catchAsync(apiController.updateTour))
+    .delete(catchAsync(apiController.deleteTour));
 
 module.exports = router;
